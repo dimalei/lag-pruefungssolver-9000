@@ -4,6 +4,7 @@ import numpy as np
 # from sympy import *
 import sympy as sym
 import scipy.linalg as sp
+import pprint
 
 
 # eigene Funktionen
@@ -85,3 +86,66 @@ def mnull(Aa_in, leps=np.finfo(float).eps * 10, verbos=0):
         print(Aa.shape, opt.shape)
         print("Test: ", np.matmul(Aa, opt))
     return opt
+
+
+def ebenen_schneiden(planes: np.ndarray):
+    pass
+
+
+def linearkombination_vektoren(*vectors: list):
+    try:
+        lgs = np.array(vectors)
+    except ValueError:
+        print("Vektoren haben nicht die gleiche Dimension!")
+        return
+
+    if lgs.size <= 1:
+        print("Mehr als 1 Vektor nötig!")
+        return
+
+    # generate LGS
+    # print(lgs)
+    rows, cols = lgs.shape
+    lgs = np.concatenate([lgs, np.eye(rows, cols)], axis=1)
+    # print(lgs)
+
+    # eliminate components
+    result = mrref(lgs)
+
+    # extract last vector
+    last_row = result[-1]
+    last_row_coefficients = last_row[:cols]
+
+    # check if null vector
+    if is_null(last_row_coefficients):
+        print("Linear abhängig ✔️")
+        # extract combination
+        combination = last_row[cols:]
+        for index, vector in enumerate(combination):
+            print(f"{chr(ord("a") + index)}:  {int(vector)}")
+        return
+
+    print("nicht Linear abhängig ❌")
+
+
+def is_null(vector: list) -> bool:
+    for number in vector:
+        if number != 0:
+            return False
+    return True
+
+
+# def pprint_dict(message: dict):
+#     for property in message.keys():
+#         print(f"{property}:")
+
+#         pass
+
+
+# testing
+if __name__ == "__main__":
+    a = [3, 2, 0]
+    b = [0, 4, 3]
+    c = [3, 10, 12]
+
+    linearkombination_vektoren(a, b, c)
