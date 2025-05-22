@@ -96,7 +96,7 @@ def ebenen_schneiden(planes: np.ndarray):
     pass
 
 
-def linearkombination_vektoren(*vectors: list):
+def linear_combination(*vectors: list):
     try:
         lgs = np.array(vectors)
     except ValueError:
@@ -122,14 +122,14 @@ def linearkombination_vektoren(*vectors: list):
 
     # check if null vector
     if is_null(last_row_coefficients):
-        print("Linear abhängig ✔️")
+        print("✔️ Linear abhängig")
         # extract combination
         combination = last_row[cols:]
         for index, vector in enumerate(combination):
             print(f"{chr(ord("a") + index)}:  {int(vector)}")
         return
 
-    print("nicht Linear abhängig ❌")
+    print("❌ nicht Linear abhängig")
 
 
 def check_linearity(input_dimensions: int, transformation: Callable):
@@ -178,10 +178,8 @@ def check_linearity(input_dimensions: int, transformation: Callable):
     # print summary
     if has_null and is_homogen and is_additiv:
         print("✔️ Transformation is linear")
-        return True
     else:
         print("❌ Transformation is NOT linear")
-        return False
 
 
 def is_null(vector) -> bool:
