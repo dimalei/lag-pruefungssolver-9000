@@ -8,6 +8,9 @@ from random import random
 from typing import Iterable, Callable
 import math
 
+DECIMAL_PRECISION = 10
+
+
 # eigene Funktionen
 def eliminate(Aa_in, tolerance=np.finfo(float).eps * 10.0, fix=False, verbos=0):
     # eliminates first row
@@ -129,15 +132,20 @@ def linearkombination_vektoren(*vectors: list):
     print("nicht Linear abhängig ❌")
 
 
-
 def check_linearity(input_dimensions: int, transformation: Callable):
+    """
+    Checks if a transformation is linear or not by applying random real values.
+    Usage: check_linearity(2, lambda v: [math.cos(random()) * v[0], math.sin(random()) * v[1]])
+    """
+    DECIMAL_PRECISION = 8
+
     # check null-vector
     null_vector = np.array([0 for i in range(input_dimensions)])
+    result = transformation(null_vector)
 
-    has_null = is_null(null_vector)
+    has_null = is_null(result)
 
-    print(f"Null Vector:  {null_vector} is null vector: {has_null}")
-    
+    print(f"{"✔️" if has_null else "❌"} Null Vector:  {result} is null vector")
 
     # check homogenity
     random_vector_v = np.array([random() for i in range(input_dimensions)])
@@ -145,25 +153,34 @@ def check_linearity(input_dimensions: int, transformation: Callable):
 
     a = transformation(np.multiply(random_scalar, random_vector_v))
     b = np.multiply(random_scalar, transformation(random_vector_v))
-    is_homogen = np.allclose(a, b)
 
-    print(f"Homogenity:   L(lambda * v) = {a} =?= lambda * L(v) = {a} : {is_homogen}")
+    is_homogen = np.allclose(
+        np.round(a, DECIMAL_PRECISION), np.round(b, DECIMAL_PRECISION)
+    )
+
+    print(
+        f"{"✔️" if is_homogen else "❌"} Homogenity:   L(lambda * v) = {a} =?= lambda * L(v) = {b}"
+    )
 
     # check additivity
-    random_vector_w =  np.array([random() for i in range(input_dimensions)])
+    random_vector_w = np.array([random() for i in range(input_dimensions)])
 
     a = transformation(np.add(random_vector_v, random_vector_w))
     b = np.add(transformation(random_vector_v), transformation(random_vector_w))
-    is_additiv = np.allclose(a, b)
+    is_additiv = np.allclose(
+        np.round(a, DECIMAL_PRECISION), np.round(b, DECIMAL_PRECISION)
+    )
 
-    print(f"Additivity:   L(v + w) = {a} =?= L(v) + L(w) = {b} : {is_additiv}")
+    print(
+        f"{"✔️" if is_additiv else "❌"} Additivity:   L(v + w) = {a} =?= L(v) + L(w) = {b}"
+    )
 
     # print summary
     if has_null and is_homogen and is_additiv:
-        print("Transformation is linear ✔️")
+        print("✔️ Transformation is linear")
         return True
     else:
-        print("Transformation is NOT linear ❌")
+        print("❌ Transformation is NOT linear")
         return False
 
 
@@ -180,20 +197,6 @@ def is_null(vector) -> bool:
     return True
 
 
-
 # testing
 if __name__ == "__main__":
-    # a = [3, 2, 0]
-    # b = [0, 4, 3]
-    # c = [3, 10, 12]
-
-    # linearkombination_vektoren(a, b, c)
-
-    print("=======================")
-    check_linearity(3, lambda v: 5*v[0] - v[1])
-    print("=======================")
-    check_linearity(3, lambda v: 5*v[0] - v[1] + 1)
-    print("=======================")
-    check_linearity(3, lambda v: np.dot(v, [random() for i in range(3)]))
-    print("=======================")
-    check_linearity(2, lambda v: [math.cos(v[0]), math.sin(v[1])])
+    pass
