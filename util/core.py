@@ -4,7 +4,7 @@ import numpy as np
 # from sympy import *
 import sympy as sym
 import scipy.linalg as sp
-from random import random
+from random import random, randint
 from typing import Iterable, Callable
 import math
 
@@ -92,10 +92,6 @@ def mnull(Aa_in, leps=np.finfo(float).eps * 10, verbos=0):
     return opt
 
 
-def ebenen_schneiden(planes: np.ndarray):
-    pass
-
-
 def linear_combination(*vectors: list):
     try:
         lgs = np.array(vectors)
@@ -145,7 +141,9 @@ def check_linearity(input_dimensions: int, transformation: Callable):
 
     has_null = is_null(result)
 
-    print(f"{"✔️" if has_null else "❌"} Null Vector:  {result} is null vector")
+    print(
+        f"{"✔️" if has_null else "❌"} Null Vector:  {result} is{"" if has_null else " NOT"} null"
+    )
 
     # check homogenity
     random_vector_v = np.array([random() for i in range(input_dimensions)])
@@ -193,6 +191,12 @@ def is_null(vector) -> bool:
         if number != 0:
             return False
     return True
+
+
+def random_vector(dimension: int, R=True) -> list:
+    if R:
+        return [random() for i in range(dimension)]
+    return [randint(-99999, 99999) for i in range(dimension)]
 
 
 # testing
