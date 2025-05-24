@@ -225,6 +225,13 @@ def check_linearity(input_dimensions: int, transformation: Callable):
 
 
 def is_null(vector) -> bool:
+    """
+    Checks if a vector is a null vector
+    Parameters:
+        vector (Iterable, Number): vector to be checked
+    Returns:
+        bool: true if input is a null-vector
+    """
 
     # scalar to list
     if not isinstance(vector, Iterable):
@@ -242,6 +249,14 @@ def is_null(vector) -> bool:
 
 
 def random_vector(dimension: int, R=True) -> list:
+    """
+    Generates a vector with random values,
+    Parameters:
+        dimension (int): Defines the dimension of the vector
+        R (bool): use Real numbres if true, integers of false
+    Returns:
+        list: a random vector
+    """
     if R:
         return [random() for i in range(dimension)]
     return [randint(-99999, 99999) for i in range(dimension)]
@@ -330,6 +345,12 @@ def null_space(lgs: np.ndarray, verbos=0):
 
 
 def display_null_space(lgs: np.ndarray, verbos=0):
+    """
+    Displays the null space of intersecting planes
+    Parameters:
+        lgs (np.ndarray): A inhomogenous LGS
+        verbos (int): prints debug info if >0
+    """
     dimensionen = lgs.shape[1]
     out = latex_vector([], dimensionen) + "="
     out += null_space(lgs, verbos)
