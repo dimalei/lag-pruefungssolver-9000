@@ -247,29 +247,30 @@ def random_vector(dimension: int, R=True) -> list:
     return [randint(-99999, 99999) for i in range(dimension)]
 
 
-def latex_vector(dimension: int, components=[]):
+def latex_vector(vector=[], dimension=1):
     """
     returns a String that can be rendered by katex as a vector.
     Parameters:
-        dimension (int): number of components of the latex_vector
         components (Number): value of that component, null if variable (renderd as x_1, x_2)
-
+        dimension (int): number of components of the latex_vector
     Returns:
-        String
+        String: latex formatted vector (pmatrix)
     """
     # cast to list if components is np.narray
-    if isinstance(components, np.ndarray):
-        components = components.tolist()
+    if isinstance(vector, np.ndarray):
+        vector = vector.tolist()
 
-    # fill up None components if missing
-    components += [None] * (dimension - len(components))
+    if dimension > len(vector):
+        # fill up None components if missing
+        vector += [None] * (dimension - len(vector))
+
     # write latex string
     out = "\\begin{pmatrix}"
-    for i in range(dimension):
+    for i, component in enumerate(vector):
         out += (
             f"x_{i+1}\\\\"
-            if components[i] == None
-            else f"{components[i]:.3f}".rstrip("0").rstrip(
+            if component == None
+            else f"{component:.3f}".rstrip("0").rstrip(
                 "."
             )  # don't print unnecassary decimals
             + "\\\\"
@@ -278,11 +279,14 @@ def latex_vector(dimension: int, components=[]):
     return out
 
 
-def latex_directional_vector(dimension: int, components, index=0):
+def latex_directional_vector(vector, index=0):
     """
     returns a String that renders latex vectors with variable scalars
     Parameters:
+        vector (Iterable): the vector that is printed
         index (int): defines the name of the scalar
+    Returns:
+        String: latex formatted vector (pmatrix) with symbolic scalar
     """
     scalars = [
         r"\lambda",
@@ -290,28 +294,82 @@ def latex_directional_vector(dimension: int, components, index=0):
         r"\gamma",
     ]
     index = index % len(scalars)
-    return scalars[index] + r"\cdot" + latex_vector(dimension, components)
+    return scalars[index] + r"\cdot" + latex_vector(vector)
 
 
 def null_space(lgs: np.ndarray, verbos=0):
+    """
+    Displays the null space in pretty latex.
+    Parameters:
+        lgs (np.ndarray): homogenous lgs (no constants)
+        verbos (int): print debug info if >0
+    Returns:
+        String: latex formated null-space
+    """
 
-    dimensionen = lgs.shape[1]
+    # dimensionen = lgs.shape[1]
     richtungsvektoren = mnull(lgs)
     if verbos > 0:
         print(richtungsvektoren)
 
     if is_null(richtungsvektoren):
-        print(f"Triviale Lösung: {richtungsvektoren}")
-        return
+        # print(f"Triviale Lösung: {richtungsvektoren}")
+        return latex_vector([0] * lgs.shape[1])
 
     anzahl_richtungsvektoren = richtungsvektoren.shape[1]
 
-    out = latex_vector(dimensionen) + "="
+    # out = latex_vector([], dimensionen) + "="
+    out = ""
     for i in range(anzahl_richtungsvektoren):
 
         out += ("+" if i != 0 else "") + latex_directional_vector(
-            dimensionen, richtungsvektoren[:, i], i
+            richtungsvektoren[:, i], i
         )
+
+    return out
+
+
+def display_null_space(lgs: np.ndarray, verbos=0):
+    dimensionen = lgs.shape[1]
+    out = latex_vector([], dimensionen) + "="
+    out += null_space(lgs, verbos)
+
+    display(Math(out))
+
+
+def particular_solution(lgs: np.ndarray, verbos=0):
+    """
+    Calulates a particular solution to a LGS (Aufpunkt)
+    Parameters:
+        lgs (np.ndarray): inhomogenous LGS
+        verbos (int): print debug info if >0
+    Returns:
+        String: latex formatted partiular solution (vector)
+    """
+    # löse das inhomogene lgs
+    solved = mrref(lgs)
+    if verbos > 0:
+        print(f"Solved:\n{solved}")
+    # die rechte seite des lgs is die partikuläre lösung (Aufpunkt)
+    return latex_vector(solved[:, -1])
+
+
+def display_general_solution(lgs: np.ndarray, verbos=0):
+    """
+    Displays the general solution of intersecting planes
+    Parameters:
+        lgs (np.ndarray): A inhomogenous LGS
+        verbos (int): prints debug info if >0
+    """
+
+    # the lgs is expeted to have constants,
+    # thus dimensions is with minus constants
+    dimensionen = lgs.shape[1] - 1
+    out = latex_vector([], dimensionen) + "="
+    out += particular_solution(lgs, verbos) + "+"
+
+    # make lgs homogen, and get null space
+    out += null_space(lgs[:, :-1])
 
     display(Math(out))
 
