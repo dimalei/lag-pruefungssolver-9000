@@ -346,7 +346,7 @@ def null_space(lgs: np.ndarray, verbos=0):
 
 def display_null_space(lgs: np.ndarray, verbos=0):
     """
-    Displays the null space of intersecting planes
+    Displays the null-space of intersecting planes, rendered in beautyful latex.
     Parameters:
         lgs (np.ndarray): A inhomogenous LGS
         verbos (int): prints debug info if >0
@@ -377,9 +377,9 @@ def particular_solution(lgs: np.ndarray, verbos=0):
 
 def display_general_solution(lgs: np.ndarray, verbos=0):
     """
-    Displays the general solution of intersecting planes
+    Displays the general solution of intersecting planes, rendered in beautyful latex.
     Parameters:
-        lgs (np.ndarray): A inhomogenous LGS
+        lgs (np.ndarray): An inhomogenous LGS (includes the right side of the equation)
         verbos (int): prints debug info if >0
     """
 
