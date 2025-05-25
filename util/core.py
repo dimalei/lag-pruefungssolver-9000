@@ -7,8 +7,6 @@ from typing import Iterable, Callable
 import math
 from IPython.display import display, Math
 
-DECIMAL_PRECISION = 10
-
 
 def angle_between_vectors(v1: list, v2: list):
     """
