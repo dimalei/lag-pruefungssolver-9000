@@ -379,19 +379,15 @@ def _latex_null_space(lgs: np.ndarray, verbos=0):
     Returns:
         String: latex formated null-space
     """
-
-    # dimensionen = lgs.shape[1]
     richtungsvektoren = mnull(lgs)
     if verbos > 0:
         print(richtungsvektoren)
 
     if is_null(richtungsvektoren):
-        # print(f"Triviale Lösung: {richtungsvektoren}")
         return _latex_vector([0] * lgs.shape[1])
 
     anzahl_richtungsvektoren = richtungsvektoren.shape[1]
 
-    # out = latex_vector([], dimensionen) + "="
     out = ""
     for i in range(anzahl_richtungsvektoren):
 
