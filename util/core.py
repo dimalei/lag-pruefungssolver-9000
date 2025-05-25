@@ -415,8 +415,20 @@ def _latex_particular_solution(lgs: np.ndarray, verbos=0):
     solved = mrref(lgs)
     if verbos > 0:
         print(f"Solved:\n{solved}")
-    # die rechte seite des lgs is die partikuläre lösung (Aufpunkt)
-    return _latex_vector(solved[:, -1])
+
+    m, n_plus_1 = solved.shape
+    n = n_plus_1 - 1  # number of variables
+    x = np.zeros(n)
+
+    # Identify pivot columns
+    row = 0
+    for col in range(n):
+        if row < m and abs(solved[row, col]) > 1e-10:
+            x[col] = solved[row, -1]  # Assign RHS value to pivot variable
+            row += 1
+        # else: free variable -> stay 0
+
+    return _latex_vector(x)
 
 
 def display_vector(vector=[], dimension=1):
