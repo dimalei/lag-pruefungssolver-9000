@@ -1,6 +1,6 @@
 import unittest
 
-from util.objects3d import Point3D
+from objects3d import Point3D
 
 
 class TestObjects3D(unittest.TestCase):
