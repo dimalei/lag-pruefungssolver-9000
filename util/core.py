@@ -8,6 +8,13 @@ import math
 from IPython.display import display, Math
 
 
+def normalize(v: np.ndarray) -> np.ndarray:
+    norm = np.linalg.norm(v)
+    if norm == 0:
+        raise ValueError("Cannot normalize a zero vector")
+    return v / norm
+
+
 def angle_between_vectors(v1: list, v2: list):
     """
     Computes the angle between 2 Vectors.
