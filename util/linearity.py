@@ -24,7 +24,13 @@ def linearity(transformation: Callable, input_dimensions: int):
     rhs_add = transformation(*u) + transformation(*v)
     additivity = sp.simplify(lhs_add - rhs_add)
 
-    is_additive = co.is_null(additivity.tolist()[0])
+    is_additive = False
+    try:
+        sum = recursive_sum(additivity)
+        if sum == 0:
+            is_additive = True
+    except:
+        is_additive = False
 
     print(f"{"Is additive. ✅" if is_additive else "Is NOT additive. ❌"}")
     print(additivity)
@@ -36,7 +42,13 @@ def linearity(transformation: Callable, input_dimensions: int):
     rhs_hom = c * transformation(*u)
     homogeneity = sp.simplify(lhs_hom - rhs_hom)
 
-    is_homogenous = co.is_null(homogeneity.tolist()[0])
+    is_homogenous = False
+    try:
+        sum = recursive_sum(homogeneity)
+        if sum == 0:
+            is_homogenous = True
+    except:
+        is_homogenous = False
 
     print(f"{"Is homogenous. ✅" if is_homogenous else "Is NOT homogenous. ❌"}")
     print(homogeneity)
@@ -65,9 +77,24 @@ def generate_symbol_vectors(dimensions: int):
     return (sp.Matrix(vector_u), sp.Matrix(vector_v))
 
 
+def recursive_sum(input_list: list):
+    total = 0
+    for elem in input_list:
+        if isinstance(elem, list):
+            total += recursive_sum(elem)
+        else:
+            total += elem
+    return total
+
+
 # testing
 if __name__ == "__main__":
     phi = sp.symbols("phi", real=True)
     transformation = lambda x, y: sp.Matrix([sp.cos(phi) * x, sp.sin(phi) * y])
-
     linearity(transformation, 2)
+
+    transformation2 = lambda x, y: x**2
+    linearity(transformation2, 2)
+
+    transformation3 = lambda x, y: x + 1
+    linearity(transformation3, 2)
