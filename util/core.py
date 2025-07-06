@@ -15,6 +15,19 @@ def normalize(v: np.ndarray) -> np.ndarray:
     return v / norm
 
 
+def perpendicular_vector(vector: np.ndarray):
+    if np.allclose(vector, 0):
+        raise ValueError("zero vector has no well-defined perpendicular vectors")
+
+    # pick an arbitrary vector not parallel to v
+    if vector[0] != 0 or vector[1] != 0:
+        # if x or y is nonzero, use [-y, x, 0]
+        return np.array([-vector[1], vector[0], 0])
+    else:
+        # if v is along z-axis, use [1, 0, 0]
+        return np.array([1, 0, 0])
+
+
 def angle_between_vectors(v1: list, v2: list):
     """
     Computes the angle between 2 Vectors.
@@ -403,6 +416,21 @@ def _latex_null_space(lgs: np.ndarray, verbos=0):
     return out
 
 
+def lgs_null_space(lgs: np.ndarray):
+    richtungsvektoren = mnull(lgs)
+
+    if is_null(richtungsvektoren):
+        return np.zeros(lgs.shape[1])
+
+    anzahl_richtungsvektoren = richtungsvektoren.shape[1]
+
+    nullspace = []
+    for i in range(anzahl_richtungsvektoren):
+        nullspace.append(richtungsvektoren[:-1, i])
+
+    return nullspace
+
+
 def _latex_particular_solution(lgs: np.ndarray, verbos=0):
     """
     Calulates a particular solution to a LGS (Aufpunkt)
@@ -430,6 +458,25 @@ def _latex_particular_solution(lgs: np.ndarray, verbos=0):
         # else: free variable -> stay 0
 
     return _latex_vector(x)
+
+
+def lgs_particular_solution(lgs: np.ndarray) -> np.ndarray:
+
+    solved = mrref(lgs)
+
+    dimensions, n_plus_1 = solved.shape
+    no_variables = n_plus_1 - 1  # number of variables
+    solution = np.zeros(no_variables)
+
+    # Identify pivot columns
+    row = 0
+    for col in range(no_variables):
+        if row < dimensions and abs(solved[row, col]) > 1e-10:
+            solution[col] = solved[row, -1]  # Assign RHS value to pivot variable
+            row += 1
+        # else: free variable -> stay 0
+
+    return solution
 
 
 def display_vector(vector=[], dimension=1):
@@ -473,6 +520,8 @@ def solve_general_solution(lgs: np.ndarray, verbos=0):
         lgs (np.ndarray): An inhomogenous LGS (includes the right side of the equation)
         verbos (int): prints debug info if >0
     """
+
+    # check intersecting
 
     # the lgs is expeted to have constants,
     # thus dimensions is with minus constants
