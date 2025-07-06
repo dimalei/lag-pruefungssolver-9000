@@ -1,7 +1,7 @@
 from typing import Callable
 import numpy as np
 import sympy as sp
-import core as co
+from . import core as co
 
 
 sp.Symbol
