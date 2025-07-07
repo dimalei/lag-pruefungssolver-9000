@@ -16,6 +16,9 @@ def normalize(v: np.ndarray) -> np.ndarray:
 
 
 def perpendicular_vector(vector: np.ndarray):
+    """
+    Kreiert einen Vektor out ⨀ input = 0
+    """
     if np.allclose(vector, 0):
         raise ValueError("zero vector has no well-defined perpendicular vectors")
 
