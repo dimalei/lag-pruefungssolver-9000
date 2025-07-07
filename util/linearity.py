@@ -2,9 +2,7 @@ from typing import Callable
 import numpy as np
 import sympy as sp
 from . import core as co
-
-
-sp.Symbol
+from IPython.display import display, Math
 
 
 def linearity(transformation: Callable, input_dimensions: int):
@@ -16,12 +14,17 @@ def linearity(transformation: Callable, input_dimensions: int):
         transformation (Callable): lambda expression representing the transformation
         *symbols (sp.Symbol): sympi symbols
     """
+    unknown_eq = r"\stackrel{?}{=}"
 
     u, v = generate_symbol_vectors(input_dimensions)
 
     # additivity L(u + v) == L(u) + L(v)
     lhs_add = transformation(*(u + v))
     rhs_add = transformation(*u) + transformation(*v)
+
+    # print before simplify
+    display(Math(f"{sp.latex(lhs_add)} {unknown_eq} {sp.latex(rhs_add)}"))
+
     additivity = sp.simplify(lhs_add - rhs_add)
 
     is_additive = False
@@ -32,14 +35,24 @@ def linearity(transformation: Callable, input_dimensions: int):
     except:
         is_additive = False
 
+    # display pretty
+    lhs_add = sp.latex(sp.simplify(lhs_add))
+    rhs_add = sp.latex(sp.simplify(rhs_add))
+    eq_symbol = "=" if is_additive else r"\neq"
+
+    display(Math(f"{lhs_add} {eq_symbol} {rhs_add}"))
+
     print(f"{"Is additive. ✅" if is_additive else "Is NOT additive. ❌"}")
-    print(additivity)
 
     # Homogeneity: L(c*u) == c*L(u)
     c = sp.Symbol("c", real=True)
 
     lhs_hom = transformation(*(c * u))
     rhs_hom = c * transformation(*u)
+
+    # print before simplify
+    display(Math(f"{sp.latex(lhs_hom)} {unknown_eq} {sp.latex(rhs_hom)}"))
+
     homogeneity = sp.simplify(lhs_hom - rhs_hom)
 
     is_homogenous = False
@@ -50,8 +63,14 @@ def linearity(transformation: Callable, input_dimensions: int):
     except:
         is_homogenous = False
 
+    # display pretty
+    lhs_str = sp.latex(sp.simplify(lhs_hom))
+    rhs_str = sp.latex(sp.simplify(rhs_hom))
+    eq_symbol = "=" if is_homogenous else r"\neq"
+
+    display(Math(f"{lhs_str} {eq_symbol} {rhs_str}"))
+
     print(f"{"Is homogenous. ✅" if is_homogenous else "Is NOT homogenous. ❌"}")
-    print(homogeneity)
 
     print(
         f"{"Linearity checks out. 📐" if is_additive and is_homogenous else " Linearity does not check out. 🍆"}"
