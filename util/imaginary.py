@@ -12,8 +12,8 @@ def real_and_imaginary_part(expression: sp.Expr):
     imag_part = sp.im(simplified)
 
     # display with latex
-    display(Math(r"\text{Re(x): }" + sp.latex(real_part)))
-    display(Math(r"\text{Im(x): }" + sp.latex(imag_part)))
+    display(Math(r"\text{Re(z): }" + sp.latex(real_part)))
+    display(Math(r"\text{Im(z): }" + sp.latex(imag_part)))
 
 
 def polar_to_cartesian(norm, angle):
