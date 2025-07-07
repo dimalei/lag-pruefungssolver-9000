@@ -4,6 +4,11 @@ import math
 
 
 def real_and_imaginary_part(expression: sp.Expr):
+    """
+    Zeigt reell und imaginärteil eines ausdruck
+        expr = sp.Rational(2,3)* sp.E ** (sp.I * 3 * sp.pi/2)
+        im.real_and_imaginary_part(expr)
+    """
     simplified = sp.simplify(expression)
     display(Math(r"\text{Simplified: }" + sp.latex(simplified)))
 
